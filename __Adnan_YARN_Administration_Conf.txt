@@ -1,0 +1,74 @@
+###==================================================================================================================
+###  YARN Administration
+
+# Submit a HDFS inbuild application.
+	locate hadoop-mapreduce-examples
+	yarn jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 4 10000
+
+# Admin Tools (rmadmin)  -  Cannot run -checkHealth when RM HA is not enabled
+	yarn rmadmin [-checkHealth -refreshQueues -refreshNodes etc]
+
+# YARN Application operation and status
+	yarn application -list												- Running and Queued Applications
+	yarn application -list -appStates ALL								- All Applications
+	yarn application -status application_1459542433815_0002				- Application Status
+	yarn application -kill application_1459542433815_0002				- Kill a running Application
+	
+# YARN logs 
+	yarn logs -applicationId application_1459542433815_0002
+
+
+# Job History Server		- http://<DNS>:19888/
+	$HADOOP_HOME/sbin/mr-jobhistory-daemon.sh start historyserver
+	
+# Resource Manager Web UI	- http://<DNS>:8088/ui2
+
+
+###==================================================================================================================
+### YARN Configurations:
+	http://hdfs.apache.org/docs/current/hdfs-yarn/hdfs-yarn-common/yarn-default.xml
+	http://docs.hortonworks.com/index.html
+	https://hortonworks.com/blog/how-to-plan-and-configure-yarn-in-hdp-2-0/
+	
+Each machine in our cluster has 48 GB of RAM.
+Some of this RAM should be reserved for Operating System usage.
+On each node, we’ll assign 40 GB RAM for YARN to use and keep 8 GB for the Operating System.
+
+
+# The following property sets the maximum memory YARN can utilize on the node:
+# In yarn-site.xml   
+<name>yarn.nodemanager.resource.memory-mb</name>
+	<value>40960</value>
+<name>yarn.scheduler.minimum-allocation-mb</name>
+	<value>2048</value>
+<name>yarn.nodemanager.vmem-pmem-ratio</name>
+	<value>2.1</value>
+
+# In mapred-site.xml:
+<name>mapreduce.map.java.opts</name>
+	<value>-Xmx3072m</value>
+<name>mapreduce.reduce.java.opts</name>
+	<value>-Xmx6144m</value>
+<name>mapreduce.map.memory.mb</name>
+	<value>4096</value>
+<name>mapreduce.reduce.memory.mb</name>
+	<value>8192</value>
+
+
+export hdfs_OPTS="-Dmapreduce.map.memory.mb=2000 -Dmapreduce.map.java.opts=-Xmx1500m"
+export hdfs_CLIENT_OPTS="-Dmapreduce.map.memory.mb=2000 -Dmapreduce.map.java.opts=-Xmx1500m"
+export YARN_OPTS="-Dmapreduce.map.memory.mb=2000 -Dmapreduce.map.java.opts=-Xmx1500m"
+export YARN_CLIENT_OPTS="-Dmapreduce.map.memory.mb=2000 -Dmapreduce.map.java.opts=-Xmx1500m"
+
+
+# Thus, with the above settings, each Map task will get the following memory allocations:
+	Total physical RAM allocated = 4 GB
+	JVM heap space upper limit within the Map task Container = 3 GB
+	Virtual memory upper limit = 4*2.1 = 8.2 GB
+
+# configuration 
+map task memory is 4GB (mapreduce.map.memory.mb = 4096 ) 
+reduce task physical memory is 8GB (mapreduce.reduce.memory.mb = 8192 )
+Node Manager’s physical memory is 40GB and that’s the reason there will be a maximum of 10 mappers((40/4) and 5 reducers(40/8)
+
+###==================================================================================================================
