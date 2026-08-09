@@ -12,10 +12,18 @@
 
 //Declarative
 pipeline {
-    agent { 
-        dockerContainer { 
-            image 'maven:3.6.3' 
-        } 
+    agent any
+    // agent { 
+    //     dockerContainer { 
+    //         image 'maven:3.6.3' 
+    //     } 
+    // }
+
+    environment {
+        dockerHome = tool 'myDocker'
+        mavenHome = tool 'myMaven'
+        PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+
     }
 
     stages {
@@ -23,6 +31,7 @@ pipeline {
             steps {
                 echo 'Building...'
                 sh 'mvn --version'
+                sh 'docker version'
             }
         }
         stage("Deploy") {
