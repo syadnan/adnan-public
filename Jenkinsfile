@@ -18,7 +18,12 @@ pipeline {
     //         image 'maven:3.6.3' 
     //     } 
     // }
-
+    agent { 
+        dockerContainer { 
+            image 'maven:3.6.3'
+            // label 'built-in'
+        } 
+    }
     environment {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
