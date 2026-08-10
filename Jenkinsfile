@@ -16,7 +16,7 @@ pipeline {
     agent {
         node {
             // label 'docker_jenkins'
-            label 'docker alpine'
+            label 'docker_alpine'
         }
     }
 
