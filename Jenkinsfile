@@ -13,22 +13,22 @@
 //Declarative
 pipeline {
     agent any
-    environment {
-        dockerHome = tool 'myDocker'
-        mavenHome = tool 'myMaven'
-        PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+    agent {
+        node {
+            label 'docker_jenkins'
+        }
     }
+    // environment {
+    //     dockerHome = tool 'myDocker'
+    //     mavenHome = tool 'myMaven'
+    //     PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+    // }
 
     stages {
         stage("Build") {
             steps {
-                echo 'Building...'
-                script {
-                    docker.image('maven:3.6.3').inside {
-                        sh 'mvn --version'
-                    }
-                }
-                sh 'docker version'
+                echo 'Building inside Docker Agent container...'
+                sh 'mvn --version'
             }
         }
         stage("Deploy") {
