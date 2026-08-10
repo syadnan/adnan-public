@@ -12,7 +12,7 @@
 
 //Declarative
 pipeline {
-    agent any
+    // agent any
     // agent { 
     //     dockerContainer { 
     //         image 'maven:3.6.3' 
