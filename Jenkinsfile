@@ -15,9 +15,11 @@ pipeline {
     // agent any
     agent {
         node {
-            label 'docker_jenkins'
+            // label 'docker_jenkins'
+            label 'docker alpine'
         }
     }
+
     // environment {
     //     dockerHome = tool 'myDocker'
     //     mavenHome = tool 'myMaven'
@@ -28,7 +30,7 @@ pipeline {
         stage("Build") {
             steps {
                 echo 'Building inside Docker Agent container...'
-                sh 'mvn --version'
+                sh 'echo Hello Mtotootot'
             }
         }
         stage("Deploy") {
