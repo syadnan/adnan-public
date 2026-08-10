@@ -12,30 +12,22 @@
 
 //Declarative
 pipeline {
-    // agent any
-    // agent { 
-    //     dockerContainer { 
-    //         image 'maven:3.6.3' 
-    //     } 
-    // }
-    agent { 
-        dockerContainer { 
-            image 'maven:3.6.3'
-            // label 'built-in'
-        } 
-    }
+    agent any
     environment {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
         PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
-
     }
 
     stages {
         stage("Build") {
             steps {
                 echo 'Building...'
-                sh 'mvn --version'
+                script {
+                    docker.image('maven:3.6.3').inside {
+                        sh 'mvn --version'
+                    }
+                }
                 sh 'docker version'
             }
         }
