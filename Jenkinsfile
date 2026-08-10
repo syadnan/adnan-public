@@ -12,7 +12,7 @@
 
 //Declarative
 pipeline {
-    agent any
+    // agent any
     agent {
         node {
             label 'docker_jenkins'
